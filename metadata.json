@@ -1,0 +1,5 @@
+{
+  "name": "PokéAI",
+  "description": "A simple Pokédex application built with React and TypeScript that allows you to search for Pokémon by name or Pokédex number and view their details.",
+  "requestFramePermissions": []
+}
