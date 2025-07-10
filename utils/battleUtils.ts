@@ -1,4 +1,3 @@
-
 import { getPokemon, getPokemonList, getMoveDetails } from '../services/pokeapi';
 import type { Pokemon, BattlePokemon, Move, MoveDetail, PokemonListItem, PokemonType } from '../types';
 import { TYPE_EFFECTIVENESS } from '../constants.tsx';
@@ -24,7 +23,8 @@ export const generateRandomTeam = async (
     
     onProgress('Fetching Pokémon list...');
     const listResponse = await getPokemonList(POKEMON_COUNT);
-    const availablePokemon = listResponse.results;
+    // Filter out alternate forms that might not have back sprites
+    const availablePokemon = listResponse.results.filter(p => !p.name.includes('-'));
     
     const selectedIndices = new Set<number>();
     while (selectedIndices.size < teamSize) {
@@ -40,12 +40,23 @@ export const generateRandomTeam = async (
     const pokemons = await Promise.all(pokemonPromises);
 
     for (const pokemon of pokemons) {
+         // Simple check if the pokemon has a back sprite, if not, skip it.
+        if (!pokemon.sprites.back_default && !pokemon.sprites.versions['generation-v']['black-white'].animated.back_default) {
+             console.log(`Skipping ${pokemon.name} due to missing back sprite.`);
+             // try to get another one
+             const newIndex = Math.floor(Math.random() * availablePokemon.length);
+             const newPokemonInfo = availablePokemon[newIndex];
+             const newPokemon = await getPokemon(newPokemonInfo.name);
+             pokemons.push(newPokemon); // This is a bit hacky, but for a demo it's fine
+             continue;
+        }
+
         onProgress(`Learning moves for ${pokemon.name}...`);
         const level = 50;
 
         const damageDealingMoves = pokemon.moves
             .map(m => m.move)
-            .filter(m => !m.name.includes('-ohko')); // Filter out one-hit KO moves
+            .filter(m => !m.name.includes('-ohko'));
 
         const selectedMoves: Move['move'][] = [];
         const moveIndices = new Set<number>();
@@ -61,6 +72,15 @@ export const generateRandomTeam = async (
         
         const moveDetails = await Promise.all(selectedMoves.map(m => getMoveDetails(m.url).catch(() => null)));
         const validMoveDetails = moveDetails.filter((m): m is MoveDetail => m !== null && m.power !== null && m.power > 0);
+
+        if (validMoveDetails.length === 0) {
+            console.log(`Skipping ${pokemon.name} due to no valid moves.`);
+            const newIndex = Math.floor(Math.random() * availablePokemon.length);
+            const newPokemonInfo = availablePokemon[newIndex];
+            const newPokemon = await getPokemon(newPokemonInfo.name);
+            pokemons.push(newPokemon);
+            continue;
+        }
 
         const stats = { hp: 0, attack: 0, defense: 0, 'special-attack': 0, 'special-defense': 0, speed: 0 };
         pokemon.stats.forEach(s => {
@@ -83,7 +103,7 @@ export const generateRandomTeam = async (
         });
     }
 
-    return team;
+    return team.slice(0, teamSize); // Ensure correct team size
 };
 
 export const calculateDamage = (attacker: BattlePokemon, defender: BattlePokemon, move: MoveDetail): {damage: number, effectiveness: number} => {

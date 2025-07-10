@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { useTeam } from '../context/TeamContext';
 import PokemonSelectionModal from '../components/PokemonSelectionModal';
@@ -11,11 +12,10 @@ import { TRASH_ICON } from '../constants.tsx';
 import { IconMdiPokeball } from '../components/IconMdiPokeball';
 
 interface TeamBuilderPageProps {
-    onBack: () => void;
     onNavigateToBattle: () => void;
 }
 
-const TeamBuilderPage: React.FC<TeamBuilderPageProps> = ({ onBack, onNavigateToBattle }) => {
+const TeamBuilderPage: React.FC<TeamBuilderPageProps> = ({ onNavigateToBattle }) => {
     const { team, setTeam, addPokemonToTeam, removePokemonFromTeam, updatePokemonMoves } = useTeam();
     
     const [isSelectionModalOpen, setSelectionModalOpen] = useState(false);
@@ -211,15 +211,8 @@ const TeamBuilderPage: React.FC<TeamBuilderPageProps> = ({ onBack, onNavigateToB
             {isSelectionModalOpen && <PokemonSelectionModal onClose={handleCloseModals} onSelect={handlePokemonSelected} />}
             {isMoveEditorOpen && pokemonForEditing && <MoveEditorModal pokemon={pokemonForEditing} initialMoves={initialMovesForEditor} onClose={handleCloseModals} onSave={handleSaveMoves}/>}
             {isSaveModalOpen && <SaveTeamModal onClose={handleCloseModals} onSave={handleSaveTeam} existingTeamNames={savedTeams.map(t => t.name)}/>}
-
-            <div className="flex justify-between items-center mb-6 px-2">
-                <h2 className="text-3xl font-bold text-slate-200">Team Builder</h2>
-                <button onClick={onBack} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
-                    &larr; Back to Search
-                </button>
-            </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-8">
                 {/* Left Column */}
                 <div className="lg:col-span-4 xl:col-span-3 bg-slate-800/50 p-4 rounded-lg border-2 border-slate-700">
                     <div className="flex justify-between items-center mb-4">

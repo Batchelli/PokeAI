@@ -4,9 +4,11 @@ interface TypewriterProps {
     text: string;
     speed?: number;
     onComplete?: () => void;
+    // A prop to manually control when completion callback is fired
+    pauseCompletion?: boolean; 
 }
 
-const Typewriter: React.FC<TypewriterProps> = ({ text, speed = 40, onComplete }) => {
+const Typewriter: React.FC<TypewriterProps> = ({ text, speed = 40, onComplete, pauseCompletion = false }) => {
     const [displayedText, setDisplayedText] = useState('');
 
     useEffect(() => {
@@ -18,14 +20,14 @@ const Typewriter: React.FC<TypewriterProps> = ({ text, speed = 40, onComplete })
                 i++;
             } else {
                 clearInterval(intervalId);
-                if (onComplete) {
+                if (onComplete && !pauseCompletion) {
                     onComplete();
                 }
             }
         }, speed);
 
         return () => clearInterval(intervalId);
-    }, [text, speed, onComplete]);
+    }, [text, speed, onComplete, pauseCompletion]);
 
     return <>{displayedText}</>;
 };

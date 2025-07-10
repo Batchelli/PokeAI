@@ -8,9 +8,10 @@ import { IconMdiPokeball } from '../components/IconMdiPokeball';
 interface SearchPageProps {
   onNavigateToList: () => void;
   onNavigateToTeamBuilder: () => void;
+  onNavigateToBattle: () => void;
 }
 
-const SearchPage: React.FC<SearchPageProps> = ({ onNavigateToList, onNavigateToTeamBuilder }) => {
+const SearchPage: React.FC<SearchPageProps> = ({ onNavigateToList, onNavigateToTeamBuilder, onNavigateToBattle }) => {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -63,6 +64,12 @@ const SearchPage: React.FC<SearchPageProps> = ({ onNavigateToList, onNavigateToT
             className="bg-sky-600 hover:bg-sky-500 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-flex items-center gap-2"
           >
             Create Team
+          </button>
+          <button
+            onClick={onNavigateToBattle}
+            className="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-flex items-center gap-2"
+          >
+            Battle
           </button>
       </div>
       <div className="mt-2 min-h-[500px] w-full">

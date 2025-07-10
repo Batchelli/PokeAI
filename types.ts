@@ -1,4 +1,5 @@
 
+
 export interface Pokemon {
   id: number;
   name: string;
@@ -14,6 +15,18 @@ export interface Pokemon {
         front_default: string;
         front_shiny: string;
       };
+    };
+    versions: {
+        'generation-v': {
+            'black-white': {
+                animated: {
+                    front_default: string | null;
+                    back_default: string | null;
+                    front_shiny: string | null;
+                    back_shiny: string | null;
+                }
+            }
+        }
     };
   };
   stats: Stat[];
@@ -150,3 +163,5 @@ export interface BattleLogEntry {
     message: string;
     typewriter: boolean;
 }
+
+export type PokemonSpriteStatus = 'idle' | 'entering' | 'withdrawing' | 'attacking';

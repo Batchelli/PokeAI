@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><circle cx='12' cy='12' r='10' fill='%23ef4444' stroke='%23111827' stroke-width='1.5'/><path d='M2,12 A10,10 0 0,0 12,22 A10,10 0 0,0 22,12 Z' fill='%23f9fafb'/><line x1='2.05' y1='12' x2='21.95' y2='12' stroke='%23111827' stroke-width='1.5'/><circle cx='12' cy='12' r='3.5' fill='white' stroke='%23111827' stroke-width='1.5'/><circle cx='12' cy='12' r='1.5' fill='%23f9fafb'/></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PokéAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -92,6 +92,39 @@
       }
       .animate-spin-smooth {
         animation: spin-smooth 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+      }
+
+      /* Withdraw & Enter Animations */
+      @keyframes withdraw-player {
+        from { transform: scale(1) translateY(0); opacity: 1; }
+        to { transform: scale(0) translateY(50px); opacity: 0; }
+      }
+      .animate-withdraw-player {
+        animation: withdraw-player 0.5s ease-in forwards;
+      }
+      @keyframes enter-player {
+        from { transform: scale(0.3) translateY(50px); opacity: 0; }
+        to { transform: scale(1) translateY(0); opacity: 1; }
+      }
+      .animate-enter-player {
+        animation: enter-player 0.5s ease-out forwards;
+      }
+
+      /* Attack Animations */
+      @keyframes attack-player {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(30px, -5px); }
+      }
+      .animate-attack-player {
+        animation: attack-player 0.4s ease-in-out;
+      }
+
+      @keyframes attack-opponent {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(-30px, 5px); }
+      }
+      .animate-attack-opponent {
+        animation: attack-opponent 0.4s ease-in-out;
       }
     </style>
   <script type="importmap">

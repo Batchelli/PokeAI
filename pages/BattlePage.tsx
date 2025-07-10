@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import RandomBattleModal from '../components/RandomBattleModal';
 import TeamNeededModal from '../components/TeamNeededModal';
@@ -5,8 +6,8 @@ import { useTeam } from '../context/TeamContext';
 import { DICE_ICON, TROPHY_ICON, TARGET_ICON } from '../constants.tsx';
 
 interface BattlePageProps {
-    onBack: () => void;
     onNavigateToRandomBattle: () => void;
+    onNavigateToTeamBuilder: () => void;
 }
 
 const BattleModeCard = ({ icon, title, description, onClick }: { icon: React.ReactNode, title: string, description: string, onClick: () => void }) => {
@@ -25,7 +26,7 @@ const BattleModeCard = ({ icon, title, description, onClick }: { icon: React.Rea
 };
 
 
-const BattlePage: React.FC<BattlePageProps> = ({ onBack, onNavigateToRandomBattle }) => {
+const BattlePage: React.FC<BattlePageProps> = ({ onNavigateToRandomBattle, onNavigateToTeamBuilder }) => {
     const { team } = useTeam();
     const [isRandomModalOpen, setRandomModalOpen] = useState(false);
     const [isTeamNeededModalOpen, setIsTeamNeededModalOpen] = useState(false);
@@ -56,17 +57,11 @@ const BattlePage: React.FC<BattlePageProps> = ({ onBack, onNavigateToRandomBattl
             {isTeamNeededModalOpen && (
                 <TeamNeededModal
                     onClose={() => setIsTeamNeededModalOpen(false)}
-                    onGoToTeamBuilder={onBack}
+                    onGoToTeamBuilder={onNavigateToTeamBuilder}
                 />
             )}
-            <div className="flex justify-between items-center mb-6 px-2">
-                 <h2 className="text-3xl font-bold text-slate-200">Choose a Battle Mode</h2>
-                 <button onClick={onBack} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
-                    &larr; Back to Team Builder
-                </button>
-            </div>
-
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto pt-8">
                 <BattleModeCard 
                     icon={DICE_ICON}
                     title="Random Battle"
