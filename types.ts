@@ -1,3 +1,4 @@
+
 export interface Pokemon {
   id: number;
   name: string;
@@ -5,7 +6,9 @@ export interface Pokemon {
   weight: number;
   sprites: {
     front_default: string;
+    back_default: string;
     front_shiny: string;
+    back_shiny: string;
     other: {
       'official-artwork': {
         front_default: string;
@@ -30,7 +33,7 @@ export interface Stat {
 export interface PokemonType {
   slot: number;
   type: {
-    name: string;
+    name:string;
     url: string;
   };
 }
@@ -101,9 +104,49 @@ export interface TeamMember {
   moves: Move['move'][];
 }
 
+export interface SavedTeam {
+  id: string;
+  name: string;
+  team: (TeamMember | null)[];
+}
+
 export interface TeamContextType {
   team: (TeamMember | null)[];
+  setTeam: (team: (TeamMember | null)[]) => void;
   addPokemonToTeam: (pokemon: Pokemon, slotIndex: number) => void;
   removePokemonFromTeam: (slotIndex: number) => void;
   updatePokemonMoves: (slotIndex: number, moves: Move['move'][]) => void;
+}
+
+// --- Battle Types ---
+
+export interface MoveDetail {
+    name: string;
+    url: string;
+    power: number | null;
+    accuracy: number | null;
+    type: { name: string; };
+    damage_class: { name: string; }; // physical, special, status
+    pp: number;
+}
+
+export interface BattlePokemon extends Omit<Pokemon, 'moves'> {
+    level: number;
+    maxHp: number;
+    currentHp: number;
+    moves: MoveDetail[];
+    isFainted: boolean;
+    calculatedStats: {
+        hp: number;
+        attack: number;
+        defense: number;
+        'special-attack': number;
+        'special-defense': number;
+        speed: number;
+    };
+}
+
+export interface BattleLogEntry {
+    message: string;
+    typewriter: boolean;
 }

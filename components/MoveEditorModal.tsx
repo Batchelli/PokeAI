@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import type { TeamMember, Move } from '../types';
+import type { Pokemon, Move } from '../types';
 
 interface MoveEditorModalProps {
-    teamMember: TeamMember;
+    pokemon: Pokemon;
+    initialMoves?: Move['move'][];
     onClose: () => void;
     onSave: (moves: Move['move'][]) => void;
 }
@@ -14,9 +15,8 @@ interface ProcessedMove {
     obj: Move['move'];
 }
 
-const MoveEditorModal: React.FC<MoveEditorModalProps> = ({ teamMember, onClose, onSave }) => {
-    const { pokemon } = teamMember;
-    const [selectedMoves, setSelectedMoves] = useState<Move['move'][]>(teamMember.moves);
+const MoveEditorModal: React.FC<MoveEditorModalProps> = ({ pokemon, initialMoves = [], onClose, onSave }) => {
+    const [selectedMoves, setSelectedMoves] = useState<Move['move'][]>(initialMoves);
     const [moveSearch, setMoveSearch] = useState('');
 
     const learnableMoves = useMemo((): ProcessedMove[] => {
@@ -85,8 +85,9 @@ const MoveEditorModal: React.FC<MoveEditorModalProps> = ({ teamMember, onClose, 
                 <button onClick={onClose} className="absolute top-3 right-3 text-white bg-slate-700/80 rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 transition-colors z-10">
                     &times;
                 </button>
-                 <div className="p-6 border-b border-slate-700">
-                    <h2 className="text-2xl font-bold text-white capitalize">Edit Moves for {pokemon.name.replace('-', ' ')}</h2>
+                 <div className="p-6 border-b border-slate-700 flex items-center gap-4">
+                    <img src={pokemon.sprites.front_default} alt={pokemon.name} className="h-12 w-12 bg-slate-700/50 rounded-full" />
+                    <h2 className="text-2xl font-bold text-white capitalize">Select Moves for {pokemon.name.replace('-', ' ')}</h2>
                 </div>
 
                 <div className="p-6 flex-grow overflow-y-hidden flex flex-col gap-4">
@@ -132,7 +133,7 @@ const MoveEditorModal: React.FC<MoveEditorModalProps> = ({ teamMember, onClose, 
 
                 <div className="p-6 border-t border-slate-700">
                     <button onClick={handleSave} className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                        Save Moves
+                        Confirm and Add to Team
                     </button>
                 </div>
             </div>

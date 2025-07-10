@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getPokemonList, getGeneration, getType } from '../services/pokeapi';
 import type { PokemonListItem } from '../types';
-import { POKEBALL_ICON, GENERATIONS, TYPE_COLORS } from '../constants.tsx';
+import { GENERATIONS, TYPE_COLORS } from '../constants.tsx';
+import { IconMdiPokeball } from '../components/IconMdiPokeball';
 import PokemonModal from '../components/PokemonModal';
 
 interface ListPageProps {
@@ -109,7 +110,7 @@ const ListPage: React.FC<ListPageProps> = ({ onBack, onNavigateToDetail }) => {
         if (loading) {
             return (
                 <div className="flex flex-col items-center justify-center h-full text-slate-300 min-h-[500px]">
-                    <div className="animate-spin text-6xl">{POKEBALL_ICON}</div>
+                    <IconMdiPokeball height="60" width="60" className="animate-spin-smooth text-white" />
                     <p className="mt-4 text-lg font-bold">Loading Pokédex...</p>
                 </div>
             );

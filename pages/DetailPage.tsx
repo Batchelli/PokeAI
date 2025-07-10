@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { getPokemon } from '../services/pokeapi';
 import type { Pokemon, Move } from '../types';
-import { POKEBALL_ICON, TYPE_COLORS, STAT_NICKNAMES } from '../constants.tsx';
+import { TYPE_COLORS, STAT_NICKNAMES } from '../constants.tsx';
+import { IconMdiPokeball } from '../components/IconMdiPokeball';
 import StatBar from '../components/StatBar';
+import TypeIcon from '../components/TypeIcon';
 
 interface DetailPageProps {
     pokemonId: string;
@@ -124,7 +126,7 @@ const DetailPage: React.FC<DetailPageProps> = ({ pokemonId, onBack }) => {
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center h-[70vh] text-slate-300">
-            <div className="animate-spin text-6xl">{POKEBALL_ICON}</div>
+            <IconMdiPokeball height="60" width="60" className="animate-spin-smooth text-white" />
             <p className="mt-4 text-lg font-bold">Loading Details...</p>
         </div>
     );
@@ -153,7 +155,12 @@ const DetailPage: React.FC<DetailPageProps> = ({ pokemonId, onBack }) => {
                         <img src={imageUrl} alt={pokemon.name} className="h-64 w-full object-contain animate-pulse-slow my-4" key={imageUrl} />
                         <h2 className="text-4xl font-bold capitalize text-white text-center">{pokemon.name.replace('-', ' ')}</h2>
                         <div className="flex justify-center gap-2 my-4">
-                            {pokemon.types.map(({ type }) => <span key={type.name} className={`px-4 py-1 rounded-full text-sm font-bold capitalize border-b-4 ${TYPE_COLORS[type.name] || TYPE_COLORS.default}`}>{type.name}</span>)}
+                            {pokemon.types.map(({ type }) => (
+                                <span key={type.name} className={`flex items-center justify-center px-3 py-1 rounded-full text-sm font-bold capitalize border-b-4 ${TYPE_COLORS[type.name] || TYPE_COLORS.default}`}>
+                                    <TypeIcon typeName={type.name} />
+                                    <span>{type.name}</span>
+                                </span>
+                            ))}
                         </div>
                     </div>
                 </div>

@@ -3,7 +3,7 @@ import type { Pokemon } from '../types';
 import { getPokemon } from '../services/pokeapi';
 import SearchBar from '../components/SearchBar';
 import PokemonCard from '../components/PokemonCard';
-import { POKEBALL_ICON } from '../constants.tsx';
+import { IconMdiPokeball } from '../components/IconMdiPokeball';
 
 interface SearchPageProps {
   onNavigateToList: () => void;
@@ -68,7 +68,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ onNavigateToList, onNavigateToT
       <div className="mt-2 min-h-[500px] w-full">
         {loading && (
           <div className="flex flex-col items-center justify-center h-full text-slate-300">
-            <div className="animate-spin text-6xl">{POKEBALL_ICON}</div>
+            <IconMdiPokeball height="60" width="60" className="animate-spin-smooth text-white" />
             <p className="mt-4 text-lg font-bold">Loading...</p>
           </div>
         )}

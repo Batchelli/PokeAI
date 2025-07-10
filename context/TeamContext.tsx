@@ -29,7 +29,7 @@ export const TeamProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     return (
-        <TeamContext.Provider value={{ team, addPokemonToTeam, removePokemonFromTeam, updatePokemonMoves }}>
+        <TeamContext.Provider value={{ team, setTeam, addPokemonToTeam, removePokemonFromTeam, updatePokemonMoves }}>
             {children}
         </TeamContext.Provider>
     );

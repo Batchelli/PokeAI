@@ -1,4 +1,4 @@
-import type { Pokemon, PokemonListResponse, GenerationResponse, TypeResponse } from '../types';
+import type { Pokemon, PokemonListResponse, GenerationResponse, TypeResponse, MoveDetail } from '../types';
 
 const API_BASE_URL = 'https://pokeapi.co/api/v2';
 
@@ -45,4 +45,21 @@ export const getType = async (typeName: string): Promise<TypeResponse> => {
         throw new Error(`Failed to fetch type ${typeName} data.`);
     }
     return response.json();
+};
+
+export const getMoveDetails = async (url: string): Promise<MoveDetail> => {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch move details from ${url}`);
+    }
+    const data = await response.json();
+    return {
+        name: data.name,
+        url: data.url,
+        power: data.power,
+        accuracy: data.accuracy,
+        type: { name: data.type.name },
+        damage_class: { name: data.damage_class.name },
+        pp: data.pp,
+    };
 };

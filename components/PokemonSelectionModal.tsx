@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getPokemonList, getGeneration, getType } from '../services/pokeapi';
 import type { PokemonListItem } from '../types';
-import { POKEBALL_ICON, GENERATIONS, TYPE_COLORS } from '../constants.tsx';
+import { GENERATIONS, TYPE_COLORS } from '../constants.tsx';
+import { IconMdiPokeball } from './IconMdiPokeball';
 
 interface PokemonSelectionModalProps {
     onClose: () => void;
@@ -16,6 +17,7 @@ const PokemonSelectionModal: React.FC<PokemonSelectionModalProps> = ({ onClose, 
 
     const [selectedGeneration, setSelectedGeneration] = useState('all');
     const [selectedType, setSelectedType] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
 
     const getPokemonIdFromUrl = (url: string): string => {
         const parts = url.split('/').filter(part => part);
@@ -32,21 +34,29 @@ const PokemonSelectionModal: React.FC<PokemonSelectionModalProps> = ({ onClose, 
                 genPokemonNames = new Set(genData.pokemon_species.map(p => p.name));
             }
 
-            let typePokemon: PokemonListItem[] | null = null;
+            let typePokemonItems: PokemonListItem[] | null = null;
             if (selectedType !== 'all') {
                 const typeData = await getType(selectedType);
-                typePokemon = typeData.pokemon.map(p => p.pokemon);
+                typePokemonItems = typeData.pokemon.map(p => p.pokemon);
             }
 
             let currentList = masterList;
 
-            if (typePokemon) {
-                const typePokemonNames = new Set(typePokemon.map(p => p.name));
-                currentList = masterList.filter(p => typePokemonNames.has(p.name));
+            if (typePokemonItems) {
+                const typePokemonNames = new Set(typePokemonItems.map(p => p.name));
+                currentList = currentList.filter(p => typePokemonNames.has(p.name));
             }
 
             if (genPokemonNames) {
                 currentList = currentList.filter(p => genPokemonNames!.has(p.name));
+            }
+
+            if (searchQuery) {
+                const lowercasedQuery = searchQuery.toLowerCase().trim();
+                currentList = currentList.filter(p => {
+                    const id = getPokemonIdFromUrl(p.url);
+                    return p.name.toLowerCase().includes(lowercasedQuery) || id.includes(lowercasedQuery);
+                });
             }
             
             setFilteredList(currentList);
@@ -58,7 +68,7 @@ const PokemonSelectionModal: React.FC<PokemonSelectionModalProps> = ({ onClose, 
             setLoading(false);
         }
 
-    }, [selectedGeneration, selectedType, masterList]);
+    }, [searchQuery, selectedGeneration, selectedType, masterList]);
 
 
     useEffect(() => {
@@ -86,7 +96,7 @@ const PokemonSelectionModal: React.FC<PokemonSelectionModalProps> = ({ onClose, 
         if (masterList.length > 0) {
             applyFilters();
         }
-    }, [selectedGeneration, selectedType, masterList, applyFilters]);
+    }, [searchQuery, selectedGeneration, selectedType, masterList, applyFilters]);
 
     const handlePokemonClick = (id: string) => {
         onSelect(id);
@@ -111,37 +121,46 @@ const PokemonSelectionModal: React.FC<PokemonSelectionModalProps> = ({ onClose, 
                 </button>
                 <div className="p-6 border-b border-slate-700">
                     <h2 className="text-2xl font-bold text-white">Select a Pokémon</h2>
-                     <div className="flex flex-col sm:flex-row gap-4 mt-4">
-                        <div className="flex-1">
-                            <label htmlFor="generation-filter-modal" className="block text-sm font-medium text-slate-300 mb-1">Generation</label>
-                            <select id="generation-filter-modal" value={selectedGeneration} onChange={e => setSelectedGeneration(e.target.value)} className="w-full p-2 rounded-lg bg-slate-700 border-2 border-slate-600 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 focus:outline-none transition-all text-white">
-                                <option value="all">All Generations</option>
-                                {GENERATIONS.map(gen => (
-                                    <option key={gen.id} value={gen.id}>{gen.name}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="flex-1">
-                            <label htmlFor="type-filter-modal" className="block text-sm font-medium text-slate-300 mb-1">Type</label>
-                            <select id="type-filter-modal" value={selectedType} onChange={e => setSelectedType(e.target.value)} className="w-full p-2 rounded-lg bg-slate-700 border-2 border-slate-600 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 focus:outline-none transition-all text-white capitalize">
-                                <option value="all">All Types</option>
-                                {Object.keys(TYPE_COLORS).filter(t => t !== 'default').map(type => (
-                                    <option key={type} value={type}>{type}</option>
-                                ))}
-                            </select>
+                    <div className="mt-4 space-y-4">
+                        <input
+                            type="text"
+                            placeholder="Search by name or ID..."
+                            value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                            className="w-full p-2 rounded-lg bg-slate-700 border-2 border-slate-600 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 focus:outline-none transition-all text-white"
+                        />
+                         <div className="flex flex-col sm:flex-row gap-4">
+                            <div className="flex-1">
+                                <label htmlFor="generation-filter-modal" className="block text-sm font-medium text-slate-300 mb-1">Generation</label>
+                                <select id="generation-filter-modal" value={selectedGeneration} onChange={e => setSelectedGeneration(e.target.value)} className="w-full p-2 rounded-lg bg-slate-700 border-2 border-slate-600 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 focus:outline-none transition-all text-white">
+                                    <option value="all">All Generations</option>
+                                    {GENERATIONS.map(gen => (
+                                        <option key={gen.id} value={gen.id}>{gen.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex-1">
+                                <label htmlFor="type-filter-modal" className="block text-sm font-medium text-slate-300 mb-1">Type</label>
+                                <select id="type-filter-modal" value={selectedType} onChange={e => setSelectedType(e.target.value)} className="w-full p-2 rounded-lg bg-slate-700 border-2 border-slate-600 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 focus:outline-none transition-all text-white capitalize">
+                                    <option value="all">All Types</option>
+                                    {Object.keys(TYPE_COLORS).filter(t => t !== 'default').map(type => (
+                                        <option key={type} value={type}>{type}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div className="p-6 flex-grow overflow-y-auto">
                     {loading && (
                          <div className="flex flex-col items-center justify-center h-full text-slate-300 min-h-[300px]">
-                            <div className="animate-spin text-6xl">{POKEBALL_ICON}</div>
+                            <IconMdiPokeball height="60" width="60" className="animate-spin-smooth text-white" />
                             <p className="mt-4 text-lg font-bold">Loading Pokédex...</p>
                         </div>
                     )}
                     {!loading && error && <p className="text-red-400 text-center">{error}</p>}
-                    {!loading && filteredList.length === 0 && <p className="text-slate-400 text-center">No Pokémon match filters.</p>}
-                    {!loading && (
+                    {!loading && !error && filteredList.length === 0 && <p className="text-slate-400 text-center">No Pokémon match the current filters.</p>}
+                    {!loading && !error && (
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                             {filteredList.map(pokemon => {
                                 const id = getPokemonIdFromUrl(pokemon.url);

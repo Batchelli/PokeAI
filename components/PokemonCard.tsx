@@ -1,8 +1,8 @@
-
 import React from 'react';
 import type { Pokemon } from '../types';
 import { TYPE_COLORS } from '../constants.tsx';
 import StatBar from './StatBar';
+import TypeIcon from './TypeIcon';
 
 interface PokemonCardProps {
   pokemon: Pokemon;
@@ -63,9 +63,10 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, isShiny, onToggleShi
             {pokemon.types.map(({ type }) => (
               <span
                 key={type.name}
-                className={`px-4 py-1 rounded-full text-sm font-bold capitalize border-b-4 ${TYPE_COLORS[type.name] || TYPE_COLORS.default}`}
+                className={`flex items-center justify-center px-3 py-1 rounded-full text-sm font-bold capitalize border-b-4 ${TYPE_COLORS[type.name] || TYPE_COLORS.default}`}
               >
-                {type.name}
+                <TypeIcon typeName={type.name} />
+                <span>{type.name}</span>
               </span>
             ))}
           </div>
